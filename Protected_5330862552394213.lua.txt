@@ -1,13 +1,10 @@
--- SETTINGS
 local Transparency = true
 local NoClip = false
 
--- GET PLAYER
 local Player = game:GetService("Players").LocalPlayer
 local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
 RealCharacter.Archivable = true
 
--- CLONE & SETUP
 local FakeCharacter = RealCharacter:Clone()
 local Part = Instance.new("Part", workspace)
 Part.Anchored = true
@@ -17,7 +14,6 @@ Part.CanCollide = true
 FakeCharacter.Parent = workspace
 FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
 
--- COPY LOCALSCRIPTS
 for _, v in pairs(RealCharacter:GetChildren()) do
     if v:IsA("LocalScript") then
         local clone = v:Clone()
@@ -26,7 +22,6 @@ for _, v in pairs(RealCharacter:GetChildren()) do
     end
 end
 
--- OPTIONAL TRANSPARENCY
 if Transparency then
     for _, v in pairs(FakeCharacter:GetDescendants()) do
         if v:IsA("BasePart") then
@@ -35,7 +30,6 @@ if Transparency then
     end
 end
 
--- INVISIBILITY TOGGLE FUNCTION
 local IsInvisible = false
 local CanInvis = true
 local PseudoAnchor
@@ -74,7 +68,6 @@ function ToggleInvisibility()
     end
 end
 
--- SKY ANCHOR MAINTAINER
 game:GetService("RunService").RenderStepped:Connect(function()
     if PseudoAnchor then
         PseudoAnchor.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
@@ -84,7 +77,6 @@ game:GetService("RunService").RenderStepped:Connect(function()
     end
 end)
 
--- DEATH HANDLING
 RealCharacter.Humanoid.Died:Connect(function()
     RealCharacter:Destroy()
     FakeCharacter:Destroy()
@@ -97,8 +89,7 @@ Player.CharacterAppearanceLoaded:Connect(function()
     IsInvisible = false
 end)
 
--- GUI CREATION
-local function CreateAdvancedGUI()
+local function CreateBasicGUI()
     local playerGui = Player:WaitForChild("PlayerGui")
 
     if playerGui:FindFirstChild("InvisGUI") then
@@ -112,169 +103,32 @@ local function CreateAdvancedGUI()
     screenGui.Parent = playerGui
 
     local mainFrame = Instance.new("Frame")
-    mainFrame.Name = "MainFrame"
-    mainFrame.Size = UDim2.new(0, 180, 0, 100)
+    mainFrame.Size = UDim2.new(0, 180, 0, 60)
     mainFrame.Position = UDim2.new(0.8, 0, 0.2, 0)
     mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     mainFrame.BackgroundTransparency = 0.3
     mainFrame.BorderSizePixel = 0
-    mainFrame.ClipsDescendants = true
     mainFrame.Parent = screenGui
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = mainFrame
-
-    local titleBar = Instance.new("Frame")
-    titleBar.Name = "TitleBar"
-    titleBar.Size = UDim2.new(1, 0, 0, 24)
-    titleBar.Position = UDim2.new(0, 0, 0, 0)
-    titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    titleBar.BorderSizePixel = 0
-    titleBar.Parent = mainFrame
-
-    local titleCorner = Instance.new("UICorner")
-    titleCorner.CornerRadius = UDim.new(0, 8)
-    titleCorner.Parent = titleBar
-
-    local titleText = Instance.new("TextLabel")
-    titleText.Name = "TitleText"
-    titleText.Size = UDim2.new(0.7, 0, 1, 0)
-    titleText.Position = UDim2.new(0.1, 0, 0, 0)
-    titleText.BackgroundTransparency = 1
-    titleText.Text = "Steal Script By Ajjans"
-    titleText.TextColor3 = Color3.fromRGB(200, 200, 200)
-    titleText.TextSize = 14
-    titleText.Font = Enum.Font.GothamSemibold
-    titleText.TextXAlignment = Enum.TextXAlignment.Left
-    titleText.Parent = titleBar
-
-    local closeButton = Instance.new("TextButton")
-    closeButton.Name = "CloseButton"
-    closeButton.Size = UDim2.new(0, 20, 0, 20)
-    closeButton.Position = UDim2.new(1, -25, 0.5, -10)
-    closeButton.AnchorPoint = Vector2.new(1, 0.5)
-    closeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    closeButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-    closeButton.Text = ""
-    closeButton.TextSize = 18
-    closeButton.Font = Enum.Font.GothamBold
-    closeButton.Parent = titleBar
-
-    local closeCorner = Instance.new("UICorner")
-    closeCorner.CornerRadius = UDim.new(0, 4)
-    closeCorner.Parent = closeButton
-
-    local dragging = false
-    local dragInput, dragStart, startPos
-
-    local function updateInput(input)
-        local delta = input.Position - dragStart
-        local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        mainFrame.Position = newPos
-    end
-
-    titleBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = mainFrame.Position
-
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-
-    titleBar.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if dragging and (input == dragInput or input.UserInputType == Enum.UserInputType.MouseMovement) then
-            updateInput(input)
-        end
-    end)
-
-    closeButton.MouseButton1Click:Connect(function()
-        screenGui:Destroy()
-    end)
+    Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 8)
 
     local toggleButton = Instance.new("TextButton")
-    toggleButton.Name = "Instant Steal"
     toggleButton.Size = UDim2.new(0.8, 0, 0, 36)
     toggleButton.Position = UDim2.new(0.1, 0, 0.5, -18)
     toggleButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     toggleButton.TextColor3 = Color3.fromRGB(220, 220, 220)
-    toggleButton.Text = "Instant Steal"
+    toggleButton.Text = "Toggle Invisibility"
     toggleButton.TextSize = 14
     toggleButton.Font = Enum.Font.GothamSemibold
     toggleButton.Parent = mainFrame
 
-    local buttonCorner = Instance.new("UICorner")
-    buttonCorner.CornerRadius = UDim.new(0, 6)
-    buttonCorner.Parent = toggleButton
-
-    local statusIndicator = Instance.new("Frame")
-    statusIndicator.Name = "StatusIndicator"
-    statusIndicator.Size = UDim2.new(0, 8, 0, 8)
-    statusIndicator.Position = UDim2.new(0.9, -10, 0.5, -4)
-    statusIndicator.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
-    statusIndicator.BorderSizePixel = 0
-    statusIndicator.Parent = toggleButton
-
-    local indicatorCorner = Instance.new("UICorner")
-    indicatorCorner.CornerRadius = UDim.new(0.5, 0)
-    indicatorCorner.Parent = statusIndicator
-
-    local function animateButton(button, targetColor, duration)
-        local startColor = button.BackgroundColor3
-        local startTime = tick()
-
-        local connection
-        connection = game:GetService("RunService").Heartbeat:Connect(function()
-            local elapsed = tick() - startTime
-            local progress = math.min(elapsed / duration, 1)
-            button.BackgroundColor3 = startColor:Lerp(targetColor, progress)
-
-            if progress >= 1 then
-                connection:Disconnect()
-            end
-        end)
-    end
+    Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 6)
 
     toggleButton.MouseButton1Click:Connect(function()
-        if CanInvis and RealCharacter and FakeCharacter then
-            if RealCharacter:FindFirstChild("HumanoidRootPart") and FakeCharacter:FindFirstChild("HumanoidRootPart") then
-                if not IsInvisible then
-                    ToggleInvisibility()
-                    animateButton(toggleButton, Color3.fromRGB(0, 80, 0), 0.2)
-                    statusIndicator.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-                    toggleButton.Text = "ACTIVE"
-                else
-                    toggleButton.Text = "WAITING..."
-                    statusIndicator.BackgroundColor3 = Color3.fromRGB(255, 150, 0)
-
-                    local countdown = 5
-                    while countdown > 0 do
-                        toggleButton.Text = string.format("%.1f", countdown)
-                        wait(0.5)
-                        countdown = countdown - 0.5
-                    end
-
-                    ToggleInvisibility()
-                    animateButton(toggleButton, Color3.fromRGB(45, 45, 45), 0.2)
-                    statusIndicator.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
-                    toggleButton.Text = "TOGGLE"
-                end
-            end
+        if CanInvis then
+            ToggleInvisibility()
         end
     end)
 end
 
--- Initialize GUI
-CreateAdvancedGUI()
+CreateBasicGUI()
