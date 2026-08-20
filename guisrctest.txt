@@ -1932,7 +1932,10 @@ end
 -- No icon-font/CDN icon support: these stay nil, so checkbox/arrow/resize/
 -- move/key glyphs render blank instead of pulling any external image.
 local CheckIcon = nil
-local ArrowIcon = nil
+local ArrowIcon = {
+    Url = "rbxassetid://105797634167645",
+    Custom = false,
+}
 local ResizeIcon = nil
 local KeyIcon = nil
 local MoveIcon = nil
