@@ -1,3 +1,30 @@
+--!native
+--!optimize 2
+
+pcall(function()
+    if typeof(getgenv) == "function" and getgenv().Library then
+        pcall(function() getgenv().Library:Unload() end)
+        getgenv().Library = nil
+    end
+    local getHui = gethui or get_hidden_gui
+    local destinations = {
+        getHui and getHui(),
+        game:GetService("CoreGui"),
+        game:GetService("Players").LocalPlayer and game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
+    }
+    for _, parent in ipairs(destinations) do
+        if parent then
+            for _, child in ipairs(parent:GetChildren()) do
+                if child.Name == "AjjanPremium_Core" or child.Name == "Obsidian" then
+                    pcall(function() child:Destroy() end)
+                end
+            end
+        end
+    end
+end)
+
+local function loadPatchedLibrary()
+    local Library = (function()
 local cloneref = (
     cloneref
     or clonereference
@@ -13,13 +40,12 @@ local UserInputService: UserInputService = cloneref(game:GetService("UserInputSe
 local TextService: TextService = cloneref(game:GetService("TextService"))
 local Teams: Teams = cloneref(game:GetService("Teams"))
 local TweenService: TweenService = cloneref(game:GetService("TweenService"))
-local HttpService: HttpService = cloneref(game:GetService("HttpService"))
 
 local getgenv = getgenv or function()
     return shared
 end
 local setclipboard = setclipboard or nil
-local protectgui = protecTexturetgui or (syn and syn.protect_gui) or function() end
+local protectgui = protectgui or (syn and syn.protect_gui) or function() end
 local gethui = gethui or function()
     return CoreGui
 end
@@ -161,7 +187,6 @@ local Templates = {
     UIStroke = { ApplyStrokeMode = Enum.ApplyStrokeMode.Border },
     Window = {
         Title = "Ajjan Hub",
-        Icon = "rbxassetid://117195344926382",
         Footer = "Ajjan Hub",
         Position = UDim2.fromOffset(6, 6),
         Size = UDim2.fromOffset(720, 480),
@@ -972,7 +997,7 @@ function Library:UpdateColorsUsingRegistry()
         for Property, Index in Properties do
             local SchemeValue = GetSchemeValue(Index)
             if SchemeValue or typeof(Index) == "function" then
-                Instance[Property] = SchemeValue or Index()
+                pcall(function() Instance[Property] = SchemeValue or Index() end)
             end
         end
     end
@@ -1007,6 +1032,10 @@ function Library:GiveSignal(
         table.insert(Library.Signals, Connection)
     end
     return Connection
+end
+
+function Library:GetIcon(_IconName: string)
+    return nil
 end
 
 function Library:GetCustomIcon(_IconName: string)
@@ -1048,7 +1077,7 @@ local function FillInstance(
                 value = SchemeValue or value()
             end
         end
-        Instance[key] = value
+        pcall(function() Instance[key] = value end)
     end
     if GetTableSize(ThemeProperties) > 0 then
         Library.Registry[Instance] = ThemeProperties
@@ -1929,8 +1958,6 @@ function Library:Unload()
     getgenv().Library = nil
 end
 
--- No icon-font/CDN icon support: these stay nil, so checkbox/arrow/resize/
--- move/key glyphs render blank instead of pulling any external image.
 local CheckIcon = nil
 local ArrowIcon = nil
 local ResizeIcon = nil
@@ -7071,7 +7098,7 @@ function Library:CreateWindow(WindowInfo)
             Parent = SearchBox,
         })
 
-        -- Search icon removed (no icon source).
+
 
         local StatsLabel = New("TextLabel", {
             AnchorPoint = Vector2.new(1, 0.5),
@@ -7175,27 +7202,7 @@ function Library:CreateWindow(WindowInfo)
             TextColor3 = "FontColor",
         }
 
-        if MoveIcon then
-            New("ImageLabel", {
-                AnchorPoint = Vector2.new(1, 0.5),
-                Image = MoveIcon.Url,
-                ImageColor3 = "AccentColor",
-                ImageRectOffset =
-                    MoveIcon.ImageRectOffset,
-                ImageRectSize =
-                    MoveIcon.ImageRectSize,
-                Position = UDim2.new(
-                    1,
-                    -10,
-                    0.5,
-                    0
-                ),
-                Size = UDim2.fromOffset(28, 28),
-                SizeConstraint =
-                    Enum.SizeConstraint.RelativeYY,
-                Parent = TopBar,
-            })
-        end
+
 
         BottomBackground = New("Frame", {
             AnchorPoint = Vector2.new(0, 1),
@@ -7281,21 +7288,7 @@ function Library:CreateWindow(WindowInfo)
                 end
             )
         end
-        New("ImageLabel", {
-            Image = ResizeIcon and ResizeIcon.Url
-                or "",
-            ImageColor3 = "FontColor",
-            ImageRectOffset = ResizeIcon
-                    and ResizeIcon.ImageRectOffset
-                or Vector2.zero,
-            ImageRectSize = ResizeIcon
-                    and ResizeIcon.ImageRectSize
-                or Vector2.zero,
-            ImageTransparency = 0.5,
-            Position = UDim2.fromOffset(2, 2),
-            Size = UDim2.new(1, -4, 1, -4),
-            Parent = ResizeButton,
-        })
+
 
         Tabs = New("ScrollingFrame", {
             AutomaticCanvasSize = Enum.AutomaticSize.Y,
@@ -8092,7 +8085,9 @@ function Library:CreateWindow(WindowInfo)
                     PaddingRight = UDim.new(0, 12),
                     Parent = GroupboxLabel,
                 })
-                local ChevronIcon = ArrowIcon
+                local ChevronIcon = Library:GetIcon(
+                        "chevron-down"
+                    ) or ArrowIcon
                 MinimizeBtn = New("ImageButton", {
                     AnchorPoint = Vector2.new(
                         1,
@@ -9627,8 +9622,8 @@ function Library:CreateWindow(WindowInfo)
     end
 
     do
-        local ToggleBtn =
-            "rbxassetid://117195344926382"
+        local ToggleBtnTexture =
+            "rbxassetid://"
         local ToggleBtnSize = 46
         local ToggleBtnIconSize = 34
         local ToggleBtnFrame = New("ImageButton", {
@@ -10717,7 +10712,7 @@ local SaveManager = {} do
     function SaveManager:BuildConfigSection(tab)
         assert(self.Library, "Must set SaveManager.Library")
 
-        local section = tab:AddRightGroupbox("Configuration", "folder-cog")
+        local section = tab:AddRightGroupbox("Configuration")
 
         section:AddInput("SaveManager_ConfigName",    { Text = "Config name" })
         section:AddButton("Create config", function()
@@ -10820,3 +10815,8 @@ getgenv().AjjanLib = Library
 getgenv().Library = Library
 
 return Library
+    end)()
+    return Library
+end
+
+local Library = loadPatchedLibrary()
