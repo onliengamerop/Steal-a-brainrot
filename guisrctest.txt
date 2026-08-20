@@ -161,7 +161,7 @@ local Templates = {
     UIStroke = { ApplyStrokeMode = Enum.ApplyStrokeMode.Border },
     Window = {
         Title = "Ajjan Hub",
-        Icon = "rbxassetid://",
+        Icon = "rbxassetid://132009679487555",
         Footer = "Ajjan Hub",
         Position = UDim2.fromOffset(6, 6),
         Size = UDim2.fromOffset(720, 480),
