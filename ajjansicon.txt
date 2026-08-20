@@ -161,7 +161,7 @@ local Templates = {
     UIStroke = { ApplyStrokeMode = Enum.ApplyStrokeMode.Border },
     Window = {
         Title = "Ajjan Hub",
-        Icon = "rbxassetid://102621356530489",
+        Icon = "rbxassetid://117195344926382",
         Footer = "Ajjan Hub",
         Position = UDim2.fromOffset(6, 6),
         Size = UDim2.fromOffset(720, 480),
@@ -9643,7 +9643,7 @@ function Library:CreateWindow(WindowInfo)
 
     do
         local ToggleBtnTexture =
-            "rbxassetid://"
+            "rbxassetid://117195344926382"
         local ToggleBtnSize = 46
         local ToggleBtnIconSize = 34
         local ToggleBtnFrame = New("ImageButton", {
