@@ -8095,7 +8095,6 @@ function Library:CreateWindow(WindowInfo)
                     PaddingRight = UDim.new(0, 12),
                     Parent = GroupboxLabel,
                 })
-                local ChevronIcon = ArrowIcon
                 MinimizeBtn = New("ImageButton", {
                     AnchorPoint = Vector2.new(
                         1,
@@ -8109,15 +8108,8 @@ function Library:CreateWindow(WindowInfo)
                         17
                     ),
                     Size = UDim2.fromOffset(22, 22),
-                    Image = ChevronIcon
-                            and ChevronIcon.Url
-                        or "",
-                    ImageRectOffset = ChevronIcon
-                            and ChevronIcon.ImageRectOffset
-                        or Vector2.zero,
-                    ImageRectSize = ChevronIcon
-                            and ChevronIcon.ImageRectSize
-                        or Vector2.zero,
+                    Image = "rbxassetid://105797634167645",
+                    ScaleType = Enum.ScaleType.Fit,
                     ImageColor3 = "AccentColor",
                     ImageTransparency = 0,
                     Parent = GroupboxHolder,
