@@ -13,6 +13,7 @@ local UserInputService: UserInputService = cloneref(game:GetService("UserInputSe
 local TextService: TextService = cloneref(game:GetService("TextService"))
 local Teams: Teams = cloneref(game:GetService("Teams"))
 local TweenService: TweenService = cloneref(game:GetService("TweenService"))
+local HttpService: HttpService = cloneref(game:GetService("HttpService"))
 
 local getgenv = getgenv or function()
     return shared
@@ -32,104 +33,7 @@ local Toggles = {}
 local Options = {}
 local Tooltips = {}
 
-local BaseURL = "https://raw.githubusercontent.com/"
-    .. "onliengamerop/ajjans-hub/refs/heads/main/"
-    .. "LibraryV5/Icons.lua"
-
 local CustomImageManager = {}
-local CustomImageManagerAssets = {
-    TransparencyTexture = {
-        RobloxId = 139785960036434,
-        Path = "Obsidian/assets/TransparencyTexture.png",
-        URL = BaseURL .. "assets/TransparencyTexture.png",
-        Id = nil,
-    },
-    SaturationMap = {
-        RobloxId = 4155801252,
-        Path = "Obsidian/assets/SaturationMap.png",
-        URL = BaseURL .. "assets/SaturationMap.png",
-        Id = nil,
-    },
-}
-do
-    local function RecursiveCreatePath(Path: string, IsFile: boolean?)
-        if not isfolder or not makefolder then
-            return
-        end
-        local Segments = Path:split("/")
-        local TraversedPath = ""
-        if IsFile then
-            table.remove(Segments, #Segments)
-        end
-        for _, Segment in ipairs(Segments) do
-            if not isfolder(TraversedPath .. Segment) then
-                makefolder(TraversedPath .. Segment)
-            end
-            TraversedPath = TraversedPath .. Segment .. "/"
-        end
-        return TraversedPath
-    end
-
-    function CustomImageManager.AddAsset(
-        AssetName: string,
-        RobloxAssetId: number,
-        URL: string,
-        ForceRedownload: boolean?
-    )
-        if CustomImageManagerAssets[AssetName] ~= nil then
-            error(string.format("Asset %q already exists", AssetName))
-        end
-        assert(typeof(RobloxAssetId) == "number", "RobloxAssetId must be a number")
-        CustomImageManagerAssets[AssetName] = {
-            RobloxId = RobloxAssetId,
-            Path = string.format("Obsidian/custom_assets/%s", AssetName),
-            URL = URL,
-            Id = nil,
-        }
-        CustomImageManager.DownloadAsset(AssetName, ForceRedownload)
-    end
-
-    function CustomImageManager.GetAsset(AssetName: string)
-        if not CustomImageManagerAssets[AssetName] then
-            return nil
-        end
-        local AssetData = CustomImageManagerAssets[AssetName]
-        if AssetData.Id then
-            return AssetData.Id
-        end
-        local AssetID = string.format("rbxassetid://%s", AssetData.RobloxId)
-        if getcustomasset then
-            local Success, NewID = pcall(getcustomasset, AssetData.Path)
-            if Success and NewID then
-                AssetID = NewID
-            end
-        end
-        AssetData.Id = AssetID
-        return AssetID
-    end
-
-    function CustomImageManager.DownloadAsset(
-        AssetName: string,
-        ForceRedownload: boolean?
-    )
-        if not getcustomasset or not writefile or not isfile then
-            return false, "missing functions"
-        end
-        local AssetData = CustomImageManagerAssets[AssetName]
-        RecursiveCreatePath(AssetData.Path, true)
-        if ForceRedownload ~= true and isfile(AssetData.Path) then
-            return true, nil
-        end
-        local success, errorMessage = pcall(function()
-            writefile(AssetData.Path, game:HttpGet(AssetData.URL))
-        end)
-        return success, errorMessage
-    end
-
-    for AssetName, _ in CustomImageManagerAssets do
-        CustomImageManager.DownloadAsset(AssetName)
-    end
-end
 
 local Library = {
     LocalPlayer = LocalPlayer,
@@ -184,10 +88,10 @@ local Library = {
     IsLightTheme = false,
 
     Scheme = {
-        BackgroundColor = Color3.fromRGB(20, 0, 0),
-        MainColor = Color3.fromRGB(40, 0, 0),
-        AccentColor = Color3.fromRGB(255, 0, 0),
-        OutlineColor = Color3.fromRGB(60, 0, 0),
+        BackgroundColor = Color3.fromRGB(17, 17, 17),
+        MainColor = Color3.fromRGB(15, 15, 15),
+        AccentColor = Color3.fromRGB(165, 39, 0),
+        OutlineColor = Color3.fromRGB(49, 49, 49),
         FontColor = Color3.fromRGB(255, 255, 255),
         Font = Font.new(
             "rbxasset://fonts/families/RobotoMono.json",
@@ -200,7 +104,6 @@ local Library = {
     },
     Registry = {},
     Scales = {},
-    ImageManager = CustomImageManager,
 }
 
 if RunService:IsStudio() then
@@ -258,7 +161,7 @@ local Templates = {
     UIStroke = { ApplyStrokeMode = Enum.ApplyStrokeMode.Border },
     Window = {
         Title = "Ajjan Hub",
-        Icon = "rbxassetid://117195344926382",
+        Icon = "rbxassetid://102621356530489",
         Footer = "Ajjan Hub",
         Position = UDim2.fromOffset(6, 6),
         Size = UDim2.fromOffset(720, 480),
@@ -1106,37 +1009,8 @@ function Library:GiveSignal(
     return Connection
 end
 
-function IsValidCustomIcon(Icon: string)
-    return typeof(Icon) == "string"
-        and (
-            Icon:match("rbxasset")
-            or Icon:match("roblox%.com/asset/%?id=")
-            or Icon:match("rbxthumb://type=")
-        )
-end
-
-function Library:GetIcon(IconName: string)
-    if not FetchIcons then
-        return
-    end
-    local Success, Icon = pcall(Icons.GetAsset, IconName)
-    if not Success then
-        return
-    end
-    return Icon
-end
-
-function Library:GetCustomIcon(IconName: string)
-    if not IsValidCustomIcon(IconName) then
-        return Library:GetIcon(IconName)
-    else
-        return {
-            Url = IconName,
-            ImageRectOffset = Vector2.zero,
-            ImageRectSize = Vector2.zero,
-            Custom = true,
-        }
-    end
+function Library:GetCustomIcon(_IconName: string)
+    return nil
 end
 
 function Library:Validate(
@@ -1322,20 +1196,8 @@ function Library:ResetCursorIcon()
     CursorCustomImage.Visible = false
     CursorCustomImage.Size = UDim2.fromOffset(20, 20)
 end
-function Library:ChangeCursorIcon(ImageId: string)
-    if not ImageId or ImageId == "" then
-        Library:ResetCursorIcon()
-        return
-    end
-    local Icon = Library:GetCustomIcon(ImageId)
-    assert(
-        Icon,
-        "Image must be a valid Roblox asset or a valid URL or a valid lucide icon."
-    )
-    CursorCustomImage.Visible = true
-    CursorCustomImage.Image = Icon.Url
-    CursorCustomImage.ImageRectOffset = Icon.ImageRectOffset
-    CursorCustomImage.ImageRectSize = Icon.ImageRectSize
+function Library:ChangeCursorIcon(_ImageId: string)
+    Library:ResetCursorIcon()
 end
 function Library:ChangeCursorIconSize(Size: UDim2)
     assert(typeof(Size) == "UDim2", "UDim2 expected.")
@@ -2067,21 +1929,13 @@ function Library:Unload()
     getgenv().Library = nil
 end
 
-local CheckIcon = Library:GetIcon("check")
-local ArrowIcon = Library:GetIcon("chevron-down")
-local ResizeIcon = Library:GetIcon("move-diagonal-2")
-local KeyIcon = Library:GetIcon("key")
-local MoveIcon = Library:GetIcon("move")
-
-function Library:SetIconModule(module: IconModule)
-    FetchIcons = true
-    Icons = module
-    CheckIcon = Library:GetIcon("check")
-    ArrowIcon = Library:GetIcon("chevron-down")
-    ResizeIcon = Library:GetIcon("move-diagonal-2")
-    KeyIcon = Library:GetIcon("key")
-    MoveIcon = Library:GetIcon("move")
-end
+-- No icon-font/CDN icon support: these stay nil, so checkbox/arrow/resize/
+-- move/key glyphs render blank instead of pulling any external image.
+local CheckIcon = nil
+local ArrowIcon = nil
+local ResizeIcon = nil
+local KeyIcon = nil
+local MoveIcon = nil
 
 local BaseAddons = {}
 do
@@ -2739,9 +2593,7 @@ do
             Parent = ToggleLabel,
         })
         local HolderTransparency = New("ImageLabel", {
-            Image = CustomImageManager.GetAsset(
-                "TransparencyTexture"
-            ),
+            Image = "rbxassetid://139785960036434",
             ImageTransparency = (1 - ColorPicker.Transparency),
             ScaleType = Enum.ScaleType.Tile,
             Size = UDim2.fromScale(1, 1),
@@ -2795,9 +2647,7 @@ do
         })
         local SatVipMap = New("ImageButton", {
             BackgroundColor3 = ColorPicker.Value,
-            Image = CustomImageManager.GetAsset(
-                "SaturationMap"
-            ),
+            Image = "rbxassetid://4155801252",
             Size = UDim2.fromOffset(200, 200),
             Parent = ColorHolder,
         })
@@ -2840,9 +2690,7 @@ do
         local TransparencySelector, TransparencyColor, TransparencyCursor
         if Info.Transparency then
             TransparencySelector = New("ImageButton", {
-                Image = CustomImageManager.GetAsset(
-                    "TransparencyTexture"
-                ),
+                Image = "rbxassetid://139785960036434",
                 ScaleType = Enum.ScaleType.Tile,
                 Size = UDim2.fromOffset(16, 200),
                 TileSize = UDim2.fromOffset(8, 8),
@@ -3265,7 +3113,7 @@ do
         New("TextLabel", {
             BackgroundTransparency = 1,
             Size = UDim2.new(1, 0, 0, 14),
-            Text = "🔴 " .. string.upper(StatusName),
+            Text = "ðŸ”´ " .. string.upper(StatusName),
             TextColor3 = Library.Scheme.AccentColor,
             TextSize = 12,
             TextXAlignment = Enum.TextXAlignment.Left,
@@ -3282,7 +3130,7 @@ do
             New("TextLabel", {
                 BackgroundTransparency = 1,
                 Size = UDim2.new(0.4, 0, 1, 0),
-                Text = "• " .. line.Title,
+                Text = "â€¢ " .. line.Title,
                 TextSize = 12,
                 TextTransparency = 0.5,
                 TextXAlignment = Enum.TextXAlignment.Left,
@@ -5473,16 +5321,6 @@ do
             ScaleType = Image.ScaleType,
             Parent = Box,
         }
-        local Icon = Library:GetCustomIcon(
-            ImageProperties.Image
-        )
-        assert(
-            Icon,
-            "Image must be a valid Roblox asset or a valid URL or a valid lucide icon."
-        )
-        ImageProperties.Image = Icon.Url
-        ImageProperties.ImageRectOffset = Icon.ImageRectOffset
-        ImageProperties.ImageRectSize = Icon.ImageRectSize
         local ImageLabel = New("ImageLabel", ImageProperties)
         function Image:SetHeight(Height: number)
             assert(Height > 0, "Height must be greater than 0.")
@@ -5495,14 +5333,6 @@ do
                 typeof(NewImage) == "string",
                 "Image must be a string."
             )
-            local Icon = Library:GetCustomIcon(NewImage)
-            assert(
-                Icon,
-                "Image must be a valid Roblox asset or a valid URL or a valid lucide icon."
-            )
-            NewImage = Icon.Url
-            Image.RectOffset = Icon.ImageRectOffset
-            Image.RectSize = Icon.ImageRectSize
             ImageLabel.Image = NewImage
             Image.Image = NewImage
         end
@@ -7170,7 +7000,7 @@ function Library:CreateWindow(WindowInfo)
             Parent = TitleHolder,
         })
 
-        if WindowInfo.Icon then
+        if WindowInfo.Icon and WindowInfo.Icon ~= "" and WindowInfo.Icon ~= "rbxassetid://" then
             WindowIcon = New("ImageLabel", {
                 Image = if tonumber(WindowInfo.Icon)
                     then string.format(
@@ -7256,27 +7086,7 @@ function Library:CreateWindow(WindowInfo)
             Parent = SearchBox,
         })
 
-        local SearchIcon = Library:GetIcon("search")
-        if SearchIcon then
-            New("ImageLabel", {
-                Image = SearchIcon.Url,
-                ImageColor3 = "FontColor",
-                ImageRectOffset =
-                    SearchIcon.ImageRectOffset,
-                ImageRectSize =
-                    SearchIcon.ImageRectSize,
-                ImageTransparency = 0.5,
-                Position = UDim2.new(
-                    0,
-                    -20,
-                    0.5,
-                    0
-                ),
-                AnchorPoint = Vector2.new(0, 0.5),
-                Size = UDim2.fromOffset(14, 14),
-                Parent = SearchBox,
-            })
-        end
+        -- Search icon removed (no icon source).
 
         local StatsLabel = New("TextLabel", {
             AnchorPoint = Vector2.new(1, 0.5),
@@ -7614,9 +7424,7 @@ function Library:CreateWindow(WindowInfo)
                 <= WindowInfo.CompactWidthActivation
         end
         WindowTitle.Visible = not IsCompact
-        if not WindowInfo.Icon then
-            WindowIcon.Visible = IsCompact
-        end
+        WindowIcon.Visible = IsCompact
         for _, Button in Library.TabButtons do
             if not Button.Icon then
                 continue
@@ -8299,9 +8107,7 @@ function Library:CreateWindow(WindowInfo)
                     PaddingRight = UDim.new(0, 12),
                     Parent = GroupboxLabel,
                 })
-                local ChevronIcon = Library:GetIcon(
-                        "chevron-down"
-                    ) or ArrowIcon
+                local ChevronIcon = ArrowIcon
                 MinimizeBtn = New("ImageButton", {
                     AnchorPoint = Vector2.new(
                         1,
@@ -8623,10 +8429,8 @@ function Library:CreateWindow(WindowInfo)
             Icon = select(2, ...)
             Description = select(3, ...)
         end
-        Icon = Icon or "key"
         local TabButton, TabLabel, TabIcon, TabContainer
-        Icon = if Icon == "key" then KeyIcon
-            else Library:GetCustomIcon(Icon)
+        Icon = nil
         do
             TabButton = New("TextButton", {
                 BackgroundTransparency = 1,
@@ -9839,7 +9643,7 @@ function Library:CreateWindow(WindowInfo)
 
     do
         local ToggleBtnTexture =
-            "rbxassetid://117195344926382"
+            "rbxassetid://"
         local ToggleBtnSize = 46
         local ToggleBtnIconSize = 34
         local ToggleBtnFrame = New("ImageButton", {
@@ -10295,7 +10099,7 @@ local function MakeSmartGroupbox(gb)
         New("TextLabel", {
             BackgroundTransparency = 1,
             Size = UDim2.new(1, 0, 0, 14),
-            Text = "🔴 "
+            Text = "ðŸ”´ "
                 .. string.upper(StatusName),
             TextColor3 = Library.Scheme.AccentColor,
             TextSize = 12,
@@ -10325,7 +10129,7 @@ local function MakeSmartGroupbox(gb)
             New("TextLabel", {
                 BackgroundTransparency = 1,
                 Size = UDim2.new(0.4, 0, 1, 0),
-                Text = "• " .. line.Title,
+                Text = "â€¢ " .. line.Title,
                 TextSize = 12,
                 TextColor3 = Library.Scheme.FontColor,
                 TextTransparency = 0.5,
