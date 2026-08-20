@@ -7000,29 +7000,14 @@ function Library:CreateWindow(WindowInfo)
             Parent = TitleHolder,
         })
 
-        if WindowInfo.Icon and WindowInfo.Icon ~= "" and WindowInfo.Icon ~= "rbxassetid://" then
-            WindowIcon = New("ImageLabel", {
-                Image = if tonumber(WindowInfo.Icon)
-                    then string.format(
-                        "rbxassetid://%d",
-                        WindowInfo.Icon
-                    )
-                    else WindowInfo.Icon,
-                Size = UDim2.fromOffset(24, 24),
-                ScaleType = Enum.ScaleType.Fit,
-                BackgroundTransparency = 1,
-                Parent = TitleHolder,
-            })
-        else
-            WindowIcon = New("TextLabel", {
-                BackgroundTransparency = 1,
-                Size = WindowInfo.IconSize,
-                Text = WindowInfo.Title:sub(1, 1),
-                TextScaled = true,
-                Visible = false,
-                Parent = TitleHolder,
-            })
-        end
+        WindowIcon = New("TextLabel", {
+            BackgroundTransparency = 1,
+            Size = WindowInfo.IconSize,
+            Text = WindowInfo.Title:sub(1, 1),
+            TextScaled = true,
+            Visible = false,
+            Parent = TitleHolder,
+        })
 
         WindowTitle = New("TextLabel", {
             BackgroundTransparency = 1,
@@ -9643,7 +9628,7 @@ function Library:CreateWindow(WindowInfo)
 
     do
         local ToggleBtnTexture =
-            "rbxassetid://117195344926382"
+            "rbxassetid://"
         local ToggleBtnSize = 46
         local ToggleBtnIconSize = 34
         local ToggleBtnFrame = New("ImageButton", {
