@@ -184,10 +184,10 @@ local Library = {
     IsLightTheme = false,
 
     Scheme = {
-        BackgroundColor = Color3.fromRGB(17, 17, 17),
-        MainColor = Color3.fromRGB(15, 15, 15),
-        AccentColor = Color3.fromRGB(165, 39, 0),
-        OutlineColor = Color3.fromRGB(49, 49, 49),
+        BackgroundColor = Color3.fromRGB(20, 0, 0),
+        MainColor = Color3.fromRGB(40, 0, 0),
+        AccentColor = Color3.fromRGB(255, 0, 0),
+        OutlineColor = Color3.fromRGB(60, 0, 0),
         FontColor = Color3.fromRGB(255, 255, 255),
         Font = Font.new(
             "rbxasset://fonts/families/RobotoMono.json",
