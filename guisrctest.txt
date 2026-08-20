@@ -19,7 +19,7 @@ local getgenv = getgenv or function()
     return shared
 end
 local setclipboard = setclipboard or nil
-local protectgui = protecTexturetgui or (syn and syn.protect_gui) or function() end
+local protectgui = protectgui or (syn and syn.protect_gui) or function() end
 local gethui = gethui or function()
     return CoreGui
 end
@@ -161,7 +161,7 @@ local Templates = {
     UIStroke = { ApplyStrokeMode = Enum.ApplyStrokeMode.Border },
     Window = {
         Title = "Ajjan Hub",
-        Icon = "rbxassetid://117195344926382",
+        Icon = "rbxassetid://",
         Footer = "Ajjan Hub",
         Position = UDim2.fromOffset(6, 6),
         Size = UDim2.fromOffset(720, 480),
@@ -9627,8 +9627,8 @@ function Library:CreateWindow(WindowInfo)
     end
 
     do
-        local ToggleBtn =
-            "rbxassetid://117195344926382"
+        local ToggleBtnTexture =
+            "rbxassetid://"
         local ToggleBtnSize = 46
         local ToggleBtnIconSize = 34
         local ToggleBtnFrame = New("ImageButton", {
