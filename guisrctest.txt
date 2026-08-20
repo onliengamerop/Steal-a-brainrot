@@ -8118,12 +8118,8 @@ function Library:CreateWindow(WindowInfo)
                     ImageRectSize = ChevronIcon
                             and ChevronIcon.ImageRectSize
                         or Vector2.zero,
-                    ImageColor3 = Color3.fromRGB(
-                        55,
-                        55,
-                        55
-                    ),
-                    ImageTransparency = 0.15,
+                    ImageColor3 = "AccentColor",
+                    ImageTransparency = 0,
                     Parent = GroupboxHolder,
                 })
                 GroupboxContainer = New("Frame", {
