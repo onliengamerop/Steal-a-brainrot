@@ -27,7 +27,29 @@ local ICONS = {
 	["repeat"] = 100962261977698,
 	settings = 97398088349385,
 	shield = 74722795731346,
-	chevron = 105797634167645,
+	["chevron"] = 105797634167645,
+	["chevron-up"] = 16898612819,
+	["chevron-down"] = 16898617411,
+	["chevron-left"] = 16898617509,
+	["chevron-right"] = 16898612819,
+	["chevron-up-circle"] = 16898617509,
+	["chevron-down-circle"] = 16898612819,
+	["chevron-left-circle"] = 16898617509,
+	["chevron-right-circle"] = 16898612819,
+	["chevron-up-square"] = 16898612819,
+	["chevron-down-square"] = 16898617411,
+	["chevron-left-square"] = 16898617509,
+	["chevron-right-square"] = 16898612819,
+	["chevrons-up"] = 16898612819,
+	["chevrons-down"] = 16898612819,
+	["chevrons-left"] = 16898612819,
+	["chevrons-right"] = 16898612819,
+	["chevrons-up-down"] = 16898612819,
+	["chevrons-left-right"] = 16898612819,
+	["chevrons-right-left"] = 16898617626,
+	["chevrons-down-up"] = 16898617626,
+	["chevron-first"] = 16898617411,
+	["chevron-last"] = 16898612819,
 }
 
 -- Build icon names list
@@ -98,7 +120,7 @@ function Lucide.ImageLabel(iconName: string, imageSize: number?, propertyOverrid
 	imageLabel.Image = asset.Url
 	imageLabel.ImageRectSize = asset.ImageRectSize
 	imageLabel.ImageRectOffset = asset.ImageRectOffset
-	imageLabel.ImageColor3 = Color3.new(1, 1, 1)
+	imageLabel.ImageColor3 = Color3.fromRGB(255, 0, 0) -- AccentColor (Red)
 	imageLabel.ScaleType = Enum.ScaleType.Fit
 	
 	-- Apply property overrides
